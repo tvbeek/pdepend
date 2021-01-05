@@ -6596,8 +6596,23 @@ abstract class AbstractPHPParser
         $declarator = $this->builder->buildAstVariableDeclarator($name);
 
         if ($this->tokenizer->peek() === Tokens::T_EQUAL) {
+            $token = $this->tokenizer->currentToken();
             $this->consumeToken(Tokens::T_EQUAL);
-            $declarator->setValue($this->parseStaticValueOrStaticArray());
+            $array = $this->parseStaticValueOrStaticArray();
+
+            if (!$array) {
+                file_put_contents('debug.log',
+                    sprintf(
+                        'Unexpected token: %s, line: %d, col: %d, file: %s.',
+                        $token ? $token->image : '?',
+                        $token ? $token->startLine : '?',
+                        $token ? $token->startColumn : '?',
+                        $this->tokenizer->getSourceFile()
+                    )
+                );
+            }
+
+            $declarator->setValue($array);
         }
 
         return $this->setNodePositionsAndReturn($declarator);

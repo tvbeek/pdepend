@@ -79,7 +79,7 @@ class ASTVariableDeclarator extends ASTExpression
      *
      * @return void
      */
-    public function setValue(ASTValue $value)
+    public function setValue($value)
     {
         $this->value = $value;
     }
